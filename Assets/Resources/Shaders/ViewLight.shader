@@ -3,6 +3,9 @@
 	Properties
 	{
 		_MainTex ("Texture", 2D) = "white" {}
+		_DisMap("DistanceMap", 2D) = "white" {}
+        _LightColor("LightColor", Color) = (1,1,1,1)
+		_Dis("Dis",Range(0,1)) = 1
 	}
 	SubShader
 	{
@@ -38,23 +41,20 @@
 			}
 			
 			sampler2D _MainTex;
+			sampler2D _DisMap;
+			fixed4 _LightColor;
+			float _Dis;
 
 			fixed4 frag (v2f i) : SV_Target
 			{
-				//卷积核
-				float kernel [3][3] = {
-					{ 1.0, 1.0, 1.0 },
-					{ 1.0, -8.0, 1.0},
-					{ 1.0, 1.0, 1.0}
-				};
+				fixed4 color = fixed4(1,1,1,1);
 
-				fixed4 color;
-				color = fixed4(0,0,0,0);
-				for(float x=-1;x<=1;x++)
-					for(int y=-1;y<=1;y++)
-						color = color + kernel[x+1][y+1] * tex2D(_MainTex, i.uv + float2(x/100.0 , y/100.0));
-				color /= 4.0;
-				return color;
+				float d = tex2D(_DisMap, i.uv).r;
+				d = saturate(d / _Dis);
+				d = 1-d;
+
+
+				return d * color * _LightColor * tex2D(_MainTex, i.uv);
 			}
 			ENDCG
 		}
