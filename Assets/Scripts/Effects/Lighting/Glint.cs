@@ -22,6 +22,11 @@ public class Glint : MonoBehaviour
 	[Header("光照角Scale范围")]
 	public Scale_Range angle_Range;
 
+	[Header("光照强度整体缩放")]
+	public float itensityScale = 1;
+	[Header("光照角度整体缩放")]
+	public float angleScale = 1;
+
 	[Header("闪烁速度")]
 	public float glint_speed;
 
@@ -58,18 +63,18 @@ public class Glint : MonoBehaviour
 			switch (m_light.type)
 			{
 				case LightType.Point:
-					m_light.intensity = itensity_scale * this.intensity;
+					m_light.intensity = itensity_scale * this.intensity * itensityScale;
 					break;
 				case LightType.Spot:
-					m_light.intensity = itensity_scale * this.intensity;
-					m_light.spotAngle = angle_scale * this.angle;
+					m_light.intensity = itensity_scale * this.intensity * itensityScale;
+					m_light.spotAngle = angle_scale * this.angle * angleScale;
 					break;
 			}
 		}
 		else
 		{
-			m_light.intensity = this.intensity;
-			m_light.spotAngle = this.angle;
+			m_light.intensity = this.intensity * itensityScale;
+			m_light.spotAngle = this.angle *angleScale;
 		}
 
     }
