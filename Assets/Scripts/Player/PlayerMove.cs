@@ -116,11 +116,13 @@ public class PlayerMove : MonoBehaviour
                         flag = true;
                     }
                     break;
-                case "LiftGate"://---------------------------------楼梯门
+                case "Gate"://---------------------------------楼梯门
                     if (castLiftGate && flag == false)
                     {
-                        castLiftCount = 0.1f;
                         pos = new Vector2(hit.point.x, hit.point.y - spot);
+
+						castLift = true;
+						count = 0.1f;
 
                         transform.position = (Vector2)(pos + Vector2.up * (bottomEdge + bottomRange));
                         flag = true;
@@ -204,15 +206,14 @@ public class PlayerMove : MonoBehaviour
         GenRayCast();
         if (CheckGround())
         {
-            verticalSpeed = 0;
+			playerMove();
+			verticalSpeed = 0;
         }
         //下落
         else
         {
             ApplyGravity();
-        }
-
-        playerMove();
+        }   
     }
 
     private void OnDrawGizmos()
