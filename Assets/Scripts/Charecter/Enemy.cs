@@ -7,6 +7,7 @@ public class Enemy : MonoBehaviour
 
 	#region Editor变量
 
+	[Header("射线检测相关变量")]
 	[Range(0.1f, 10.0f)]
 	public float upEdge;
 	[Range(0.1f, 10.0f)]
@@ -15,6 +16,9 @@ public class Enemy : MonoBehaviour
 	public float bottomRange;
 	[Range(0.1f, 10.0f)]
 	public float forwardRange;
+
+	[Header("脚的局部坐标")]
+	public Vector2 footPos;
 
 	#endregion
 
@@ -43,6 +47,7 @@ public class Enemy : MonoBehaviour
 
 	#region 移动机制
 
+	//碰撞射线检测结果存储
 	RaycastHit2D[] bottomHit, upHit;
 
 	private enum Direction
@@ -67,6 +72,7 @@ public class Enemy : MonoBehaviour
 	//计时器相关
 	private float lift_timeVal;
 
+	//发射碰撞射线
 	private void GenRayCast()
 	{
 		Vector3 bottomPos = new Vector3(0, -bottomEdge) + transform.position;
@@ -76,6 +82,7 @@ public class Enemy : MonoBehaviour
 		upHit = Physics2D.RaycastAll(upPos, Forward, forwardRange);
 	}
 
+	//检查角色是否位于地面
 	private bool CheckGround()
 	{
 		bool flag = false;
@@ -90,7 +97,7 @@ public class Enemy : MonoBehaviour
 					if(flag == false)
 					{
 						pos = hit.point;
-						transform.position = (Vector2)(pos + Vector2.up * (bottomEdge + bottomRange));
+						transform.position = pos - footPos;
 						flag = true;
 					}
 					break;
@@ -98,15 +105,15 @@ public class Enemy : MonoBehaviour
 					if( castLift && flag == false)
 					{
 						pos = hit.point;
-						transform.position = (Vector2)(pos + Vector2.up * (bottomEdge + bottomRange));
+						transform.position = pos - footPos;
 						flag = true;
 					}
 					break;
-				case "LiftGate":
+				case "Gate":
 					if (!castLift && flag == false)
 					{
 						pos = hit.point;
-						transform.position = (Vector2)(pos + Vector2.up * (bottomEdge + bottomRange));
+						transform.position = pos - footPos;
 						flag = true;
 					}
 					break;
@@ -116,24 +123,57 @@ public class Enemy : MonoBehaviour
 		return flag;
 	}
 
+	//移动角色(同时计算撞墙)
 	private void Move(Direction direction)
 	{
+		this.direction = direction;
 		//移动敌人
-		if(direction == Direction.right)
+		if (direction == Direction.right)
 		{
 			sr.flipX = false;
-				
+
+			//检测墙壁
+			if (upHit.Length != 0)
+			{
+				Vector3 pos = Vector3.zero;
+				foreach (RaycastHit2D hit in upHit)
+				{
+					if (hit.collider.tag == "Wall")
+					{
+						//有墙壁，终止移动
+						return;
+					}
+				}
+			}
+
 			transform.position = transform.position + Vector3.right * moveSpeed * Time.fixedDeltaTime;
 		}
 		else
 		{
 			sr.flipX = true;
-			
+
+			//检测墙壁
+			if (upHit.Length != 0)
+			{
+				Vector3 pos = Vector3.zero;
+				foreach (RaycastHit2D hit in upHit)
+				{
+					if (hit.collider.tag == "Wall")
+					{
+						//有墙壁，终止移动
+						return;
+					}
+				}
+			}
+
 			transform.position = transform.position + Vector3.left * moveSpeed * Time.fixedDeltaTime;
 		}
-		//移动
+
+
+
 	}
 
+	//应用重力
 	private void ApplyGravity()
 	{
 		float g = 9.8f;
@@ -156,13 +196,13 @@ public class Enemy : MonoBehaviour
 
 	void Start()
 	{
-
+		AIStart();
 	}
 
 	void Update()
 	{
+		AIUpdate();
 
-		Debug.Log(castLift);
 
 	}
 
@@ -182,7 +222,7 @@ public class Enemy : MonoBehaviour
 			ApplyGravity();
 		}
 
-		TestMove();
+//		TestMove();
 	}
 
 	private void OnDrawGizmos()
@@ -193,9 +233,71 @@ public class Enemy : MonoBehaviour
 
 		Gizmos.DrawLine(bottomPos, bottomPos + Vector3.down * bottomRange);
 		Gizmos.DrawLine(upPos, upPos + Forward * forwardRange);
+
+		Gizmos.color = Color.yellow;
+		Gizmos.DrawSphere(footPos + (Vector2)transform.position, 0.1f);
+
 	}
 
 	#endregion
+
+	#region AI控制器
+
+	//状态
+	private Vector2 ai_target;
+	
+
+	private void AIStart()
+	{
+		StartCoroutine(FindPlayer());
+	}
+
+	private void AIUpdate()
+	{
+		//判断玩家和怪物是否在同一个楼层
+		if(Mathf.Abs(ai_target.y - transform.position.y) < 0.5f)		//同楼层
+		{
+			castLift = false;
+			if(ai_target.x > transform.position.x)
+			{
+				Move(Direction.right);
+			}
+			else
+			{
+				Move(Direction.left);
+			}
+		}
+		else														//不同楼层
+		{
+			castLift = true;
+			if(transform.position.x > 0)
+			{
+				Move(Direction.right);
+			}
+			else
+			{
+				Move(Direction.left);
+			}
+		}
+
+	}
+
+	//协程
+	IEnumerator FindPlayer()
+	{
+		while (true)
+		{
+			GameObject player = GameObject.FindGameObjectWithTag("Player");
+			if(player != null)
+			{
+				ai_target = player.transform.position;
+			}
+			yield return new WaitForSeconds(1);
+		}
+	}
+
+	#endregion
+
 
 	private void TestMove()
 	{
