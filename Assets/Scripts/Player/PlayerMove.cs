@@ -308,7 +308,9 @@ public class PlayerMove : MonoBehaviour
     GameObject Energy;
     void playerEnergy()
     {
-        Energy = GameObject.Find("PlayerEnergy");
+        //找到玩家的能量
+
+
 
 
     }
