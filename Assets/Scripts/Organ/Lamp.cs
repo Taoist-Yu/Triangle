@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using DG.Tweening;
 
 public class Lamp : Organ
 {
@@ -19,7 +20,8 @@ public class Lamp : Organ
 	GameObject m_light;
 	//是否是亮着的状态
 	public bool isLighting { get; private set; }
-	private float timeVal = 0.0f;		//计时器，从灯亮起开始计时
+	private float timeVal = 0.0f;       //计时器，从灯亮起开始计时
+	private float lightScale = 0;
 
 	public override void OnUse(GameObject player)
 	{
@@ -32,7 +34,7 @@ public class Lamp : Organ
 	void Awake()
 	{
 		m_light = transform.Find("Light").gameObject;
-		m_light.SetActive(false);	
+			
 	}
 
 	void Start()
@@ -47,19 +49,32 @@ public class Lamp : Organ
 		{
 			DisableLight();			//包含了timeVal = 0
 		}
+		
+	}
+
+	void LateUpdate()
+	{
+		m_light.GetComponent<Light>().intensity *= lightScale;
 	}
 
 	//检查玩家是否有碎片,如果有，消耗掉
 	private bool CheckClip(GameObject player)
 	{
-		bool flag = true;
-		return true;
+		bool flag = false;
+		if (player.GetComponent<PlayerMove>().checkClip())
+		{
+			flag = true;
+			player.GetComponent<PlayerMove>().useClip();
+		}
+		EnableLight();
+
+		return flag;
 	}
 
 	//开启光照
 	public void EnableLight()
 	{
-		m_light.SetActive(true);
+		DOTween.To(() => lightScale, x => lightScale = x, 1.0f, 0.3f);
 		isLighting = true;
 		timeVal = duration;
 	}
@@ -67,7 +82,7 @@ public class Lamp : Organ
 	//关闭光照
 	public void DisableLight()
 	{
-		m_light.SetActive(false);
+		DOTween.To(() => lightScale, x => lightScale = x, 0.0f, 0.3f);
 		isLighting = false;
 		timeVal = 0;
 	}
