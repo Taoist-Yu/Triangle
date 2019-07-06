@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class Lemp : Organ
+public class Lamp : Organ
 {
 
 	#region Editor
