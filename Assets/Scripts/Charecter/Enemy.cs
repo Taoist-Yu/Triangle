@@ -245,6 +245,11 @@ public class Enemy : MonoBehaviour
 
 	#region AI控制器
 
+	//引用
+	[Header("AI控制器对场景物品的引用")]
+	public GameObject[] lamps;
+	public GameObject[] lifts;
+
 	//状态
 	private Vector2 ai_target;
 
@@ -258,14 +263,10 @@ public class Enemy : MonoBehaviour
 		//判断目标和怪物是否在同一个楼层
 		if(GetFloor(transform.position.y) == GetFloor(ai_target.y))		//同楼层
 		{
-			castLift = false;
-			if(ai_target.x > transform.position.x)
+			int floor = GetFloor(ai_target.y);
+			if(!(floor == 1))
 			{
-				Move(Direction.right);
-			}
-			else
-			{
-				Move(Direction.left);
+
 			}
 		}
 		else														//不同楼层
