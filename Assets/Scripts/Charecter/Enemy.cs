@@ -26,7 +26,7 @@ public class Enemy : MonoBehaviour
 
 	#region 敌人属性参数
 
-	private float moveSpeed = 1;
+	private float moveSpeed = 3;
 
 	private float verticalSpeed = 0;
 
@@ -80,7 +80,7 @@ public class Enemy : MonoBehaviour
 	{
 		bool flag = false;
 
-		Vector2 pos;
+		Vector2 pos = new Vector2();
 
 		foreach(RaycastHit2D hit in bottomHit)
 		{
@@ -90,6 +90,7 @@ public class Enemy : MonoBehaviour
 					if(flag == false)
 					{
 						pos = hit.point;
+						transform.position = (Vector2)(pos + Vector2.up * (bottomEdge + bottomRange));
 						flag = true;
 					}
 					break;
@@ -97,6 +98,7 @@ public class Enemy : MonoBehaviour
 					if( castLift && flag == false)
 					{
 						pos = hit.point;
+						transform.position = (Vector2)(pos + Vector2.up * (bottomEdge + bottomRange));
 						flag = true;
 					}
 					break;
@@ -104,6 +106,7 @@ public class Enemy : MonoBehaviour
 					if (!castLift && flag == false)
 					{
 						pos = hit.point;
+						transform.position = (Vector2)(pos + Vector2.up * (bottomEdge + bottomRange));
 						flag = true;
 					}
 					break;
@@ -115,11 +118,10 @@ public class Enemy : MonoBehaviour
 
 	private void Move(Direction direction)
 	{
-
+		//移动敌人
 		if(direction == Direction.right)
 		{
 			sr.flipX = false;
-			
 				
 			transform.position = transform.position + Vector3.right * moveSpeed * Time.fixedDeltaTime;
 		}
@@ -129,6 +131,7 @@ public class Enemy : MonoBehaviour
 			
 			transform.position = transform.position + Vector3.left * moveSpeed * Time.fixedDeltaTime;
 		}
+		//移动
 	}
 
 	private void ApplyGravity()
@@ -158,16 +161,9 @@ public class Enemy : MonoBehaviour
 
 	void Update()
 	{
-		//计时器相关 
-		if(lift_timeVal > 0)
-		{
-			lift_timeVal -= Time.deltaTime;
-		}
-		else
-		{
-			lift_timeVal = 0;
-			this.castLift = false;
-		}
+
+		Debug.Log(castLift);
+
 	}
 
 	void FixedUpdate()
@@ -215,7 +211,11 @@ public class Enemy : MonoBehaviour
 
 		if (Input.GetKeyDown(KeyCode.J))
 		{
-			
+			castLift = true;
+		}
+		if (Input.GetKeyDown(KeyCode.K))
+		{
+			castLift = false;
 		}
 
 	}
