@@ -11,18 +11,24 @@ public class Clip : Organ
 	GameObject player;
 	Vector3 targetPos;
 
-	
-
 	public override void OnUse(GameObject player)
 	{
 		this.player = player;
 		player.GetComponent<PlayerMove>().addClip();
+
+		transform.DOScale(0.4f, 1.0f);
+		
 	}
 
 	void Update()
 	{
-		targetPos = player.transform.position;
-		transform.DOMove(targetPos + 3 * Vector3.up, 1.0f);
+		targetPos = player.transform.position + Vector3.up;
+		bool flip = player.GetComponent<SpriteRenderer>().flipX;
+		targetPos += (flip ? Vector3.right : Vector3.left) * 3f;
+
+		targetPos.y += 0.5f * Mathf.Sin(Time.time);
+
+		transform.DOMove(targetPos, 0.5f);
 	}
 
 }
