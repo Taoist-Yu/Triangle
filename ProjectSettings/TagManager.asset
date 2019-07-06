@@ -8,6 +8,8 @@ TagManager:
   - Plane
   - Gate
   - Wall
+  - LiftGate
+  - HideSpace
   layers:
   - Default
   - TransparentFX
