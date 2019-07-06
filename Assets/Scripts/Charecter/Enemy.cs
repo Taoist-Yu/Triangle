@@ -7,6 +7,7 @@ public class Enemy : MonoBehaviour
 
 	#region Editor变量
 
+	[Header("射线检测相关变量")]
 	[Range(0.1f, 10.0f)]
 	public float upEdge;
 	[Range(0.1f, 10.0f)]
@@ -15,6 +16,9 @@ public class Enemy : MonoBehaviour
 	public float bottomRange;
 	[Range(0.1f, 10.0f)]
 	public float forwardRange;
+
+	[Header("脚的局部坐标")]
+	public Vector2 footPos;
 
 	#endregion
 
@@ -43,6 +47,7 @@ public class Enemy : MonoBehaviour
 
 	#region 移动机制
 
+	//碰撞射线检测结果存储
 	RaycastHit2D[] bottomHit, upHit;
 
 	private enum Direction
@@ -90,7 +95,7 @@ public class Enemy : MonoBehaviour
 					if(flag == false)
 					{
 						pos = hit.point;
-						transform.position = (Vector2)(pos + Vector2.up * (bottomEdge + bottomRange));
+						transform.position = pos - footPos;
 						flag = true;
 					}
 					break;
@@ -98,15 +103,15 @@ public class Enemy : MonoBehaviour
 					if( castLift && flag == false)
 					{
 						pos = hit.point;
-						transform.position = (Vector2)(pos + Vector2.up * (bottomEdge + bottomRange));
+						transform.position = pos - footPos;
 						flag = true;
 					}
 					break;
-				case "LiftGate":
+				case "Gate":
 					if (!castLift && flag == false)
 					{
 						pos = hit.point;
-						transform.position = (Vector2)(pos + Vector2.up * (bottomEdge + bottomRange));
+						transform.position = pos - footPos;
 						flag = true;
 					}
 					break;
@@ -118,20 +123,51 @@ public class Enemy : MonoBehaviour
 
 	private void Move(Direction direction)
 	{
+		this.direction = direction;
 		//移动敌人
-		if(direction == Direction.right)
+		if (direction == Direction.right)
 		{
 			sr.flipX = false;
-				
+
+			//检测墙壁
+			if (upHit.Length != 0)
+			{
+				Vector3 pos = Vector3.zero;
+				foreach (RaycastHit2D hit in upHit)
+				{
+					if (hit.collider.tag == "Wall")
+					{
+						//有墙壁，终止移动
+						return;
+					}
+				}
+			}
+
 			transform.position = transform.position + Vector3.right * moveSpeed * Time.fixedDeltaTime;
 		}
 		else
 		{
 			sr.flipX = true;
-			
+
+			//检测墙壁
+			if (upHit.Length != 0)
+			{
+				Vector3 pos = Vector3.zero;
+				foreach (RaycastHit2D hit in upHit)
+				{
+					if (hit.collider.tag == "Wall")
+					{
+						//有墙壁，终止移动
+						return;
+					}
+				}
+			}
+
 			transform.position = transform.position + Vector3.left * moveSpeed * Time.fixedDeltaTime;
 		}
-		//移动
+
+
+
 	}
 
 	private void ApplyGravity()
@@ -162,7 +198,7 @@ public class Enemy : MonoBehaviour
 	void Update()
 	{
 
-		Debug.Log(castLift);
+
 
 	}
 
@@ -193,6 +229,10 @@ public class Enemy : MonoBehaviour
 
 		Gizmos.DrawLine(bottomPos, bottomPos + Vector3.down * bottomRange);
 		Gizmos.DrawLine(upPos, upPos + Forward * forwardRange);
+
+		Gizmos.color = Color.yellow;
+		Gizmos.DrawSphere(footPos + (Vector2)transform.position, 0.1f);
+
 	}
 
 	#endregion
