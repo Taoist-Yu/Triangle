@@ -58,24 +58,23 @@ public class PlayerLight : MonoBehaviour
 	//开启玩家灯
 	public void LightUp()
 	{
-		Tween tween;
+		DOTween.To(() => lightScale, x => lightScale = x, 1.0f, 0.3f);
 		
-
 	}
 
 	//熄灭玩家灯
 	public void LightDown()
 	{
-		DOTween.To(() => lightScale, x => lightScale = x, 0.5f,1);
+		DOTween.To(() => lightScale, x => lightScale = x, 0.0f, 0.3f);
 	}
 
 	void Update()
 	{
 		//判断当前是否为低光照
-		if(light_spot.GetComponent<Glint>().EnableGlint == true)
+		if (light_spot.GetComponent<Glint>().EnableGlint == true)
 		{
 			timeVal += Time.deltaTime;
-			if(timeVal < 1.5f)
+			if (timeVal < 1.5f)
 			{
 				light_point.GetComponent<Glint>().itensityScale = 0.5f;
 				light_point.GetComponent<Glint>().angleScale = 0.5f;
@@ -89,7 +88,7 @@ public class PlayerLight : MonoBehaviour
 				light_spot.GetComponent<Glint>().itensityScale = 0f;
 				light_spot.GetComponent<Glint>().angleScale = 0f;
 			}
-			if(timeVal > 2.0f)
+			if (timeVal > 2.0f)
 			{
 				timeVal = 0;
 			}
@@ -98,10 +97,6 @@ public class PlayerLight : MonoBehaviour
 		{
 			timeVal = 0;
 		}
-
-		//Apply Scale
-		light_point.GetComponent<Glint>().itensityScale *= lightScale;
-		light_spot.GetComponent<Glint>().itensityScale *= lightScale;
 
 
 		//test
@@ -126,7 +121,16 @@ public class PlayerLight : MonoBehaviour
 			this.LightDown();
 		}
 
+		Debug.Log(lightScale);
 
+
+	}
+
+	void LateUpdate()
+	{
+		//Apply Scale
+		light_point.GetComponent<Glint>().GetComponent<Light>().intensity *= lightScale;
+		light_spot.GetComponent<Glint>().GetComponent<Light>().intensity *= lightScale;
 	}
 
 
