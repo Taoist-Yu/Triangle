@@ -53,7 +53,7 @@ public class PlayerMove : MonoBehaviour
 
     RaycastHit2D[] bottomHit, upHit;
 
-    private enum Direction
+    public enum Direction
     {
         right,
         left
