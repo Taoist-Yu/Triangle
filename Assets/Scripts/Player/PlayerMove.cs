@@ -179,6 +179,9 @@ public class PlayerMove : MonoBehaviour
 
     float count = 0;
     float castLiftCount = 0;
+
+    //玩家死亡时间
+    int deathTime = 100;
     void Update()
     {
         count -= Time.deltaTime;
@@ -192,6 +195,11 @@ public class PlayerMove : MonoBehaviour
         {
             castLiftCount = 0;
             castLiftGate = true;
+        }
+
+        if (deathTime <= 100)
+        {
+
         }
         //Debug.Log(castLift);
         //Debug.Log(castLiftGate);
@@ -305,11 +313,13 @@ public class PlayerMove : MonoBehaviour
 
     #region 玩家能量值
 
+    //预制体获取
     GameObject Energy;
+
     void playerEnergy()
     {
         //找到玩家的能量
-
+        Energy = GameObject.Find("PlayerEnergy");
 
 
 
