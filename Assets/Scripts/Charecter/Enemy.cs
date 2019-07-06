@@ -237,6 +237,8 @@ public class Enemy : MonoBehaviour
 		Gizmos.color = Color.yellow;
 		Gizmos.DrawSphere(footPos + (Vector2)transform.position, 0.1f);
 
+		//AI
+
 	}
 
 	#endregion
@@ -245,7 +247,6 @@ public class Enemy : MonoBehaviour
 
 	//状态
 	private Vector2 ai_target;
-	
 
 	private void AIStart()
 	{
@@ -254,8 +255,8 @@ public class Enemy : MonoBehaviour
 
 	private void AIUpdate()
 	{
-		//判断玩家和怪物是否在同一个楼层
-		if(Mathf.Abs(ai_target.y - transform.position.y) < 0.5f)		//同楼层
+		//判断目标和怪物是否在同一个楼层
+		if(GetFloor(transform.position.y) == GetFloor(ai_target.y))		//同楼层
 		{
 			castLift = false;
 			if(ai_target.x > transform.position.x)
@@ -282,6 +283,19 @@ public class Enemy : MonoBehaviour
 
 	}
 
+	//根据Y坐标获取楼层
+	private int GetFloor(float y)
+	{
+		int floor = 1;
+
+		if (y > -4)
+			floor = 2;
+		if (y > 4)
+			floor = 3;
+
+		return floor;
+	}
+
 	//协程
 	IEnumerator FindPlayer()
 	{
@@ -297,29 +311,5 @@ public class Enemy : MonoBehaviour
 	}
 
 	#endregion
-
-
-	private void TestMove()
-	{
-		float h = Input.GetAxis("Horizontal");
-		if(h > 0)
-		{
-			Move(Direction.right);
-		}
-		else if(h < 0)
-		{
-			Move(Direction.left);
-		}
-
-		if (Input.GetKeyDown(KeyCode.J))
-		{
-			castLift = true;
-		}
-		if (Input.GetKeyDown(KeyCode.K))
-		{
-			castLift = false;
-		}
-
-	}
 
 }
