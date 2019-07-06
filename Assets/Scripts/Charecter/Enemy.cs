@@ -111,15 +111,26 @@ public class Enemy : MonoBehaviour
 						//若敌人在一楼，特判
 						if(!lastCastLift && transform.position.y < 0 && Mathf.Abs(transform.position.x) < 10)
 						{
-							if (direction == Direction.left)
-							{
-								direction = Direction.right;
-								sr.flipX = false;
-							}
-							else
+							//if (direction == Direction.left)
+							//{
+							//	direction = Direction.right;
+							//	sr.flipX = false;
+							//}
+							//else
+							//{
+							//	sr.flipX = true;
+							//	direction = Direction.left;
+							//}
+
+							if(transform.position.y < -5)
 							{
 								sr.flipX = true;
 								direction = Direction.left;
+							}
+							else
+							{
+								direction = Direction.right;
+								sr.flipX = false;
 							}
 								
 						}
@@ -298,6 +309,32 @@ public class Enemy : MonoBehaviour
 	private void AIUpdate()
 	{
 		Move();
+
+		//检测前方是否有激活灯
+		RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, Forward, 5.0f);
+		bool flag = false;
+		foreach(var hit in hits)
+		{
+			if (hit.transform.CompareTag("Organ"))
+			{
+				Lamp lamp = hit.transform.GetComponent<Lamp>();
+				if (lamp != null)
+				{
+					if(lamp.isLighting == true)
+					{
+						flag = true;
+					}
+				}
+			}
+		}
+		if (flag)
+		{
+			if (direction == Direction.left)
+				direction = Direction.right;
+			else
+				direction = Direction.left;
+		}
+
 
 	}
 
