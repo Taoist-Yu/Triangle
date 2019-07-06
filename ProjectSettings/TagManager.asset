@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - Lift
+  - Plane
+  - Gate
+  - Wall
   layers:
   - Default
   - TransparentFX

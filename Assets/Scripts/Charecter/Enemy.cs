@@ -5,7 +5,7 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
 
-	#region Editor
+	#region Editor变量
 
 	[Range(0.1f, 10.0f)]
 	public float upEdge;
@@ -15,28 +15,35 @@ public class Enemy : MonoBehaviour
 	public float bottomRange;
 	[Range(0.1f, 10.0f)]
 	public float forwardRange;
-	[Range(0.1f, 10.0f)]
-	public float bottomRight;
+
+	#endregion
+
+	#region 组件引用
+
+	private SpriteRenderer sr;
+
+	#endregion
+
+	#region 敌人属性参数
+
+	private float moveSpeed = 1;
+
+	private float verticalSpeed = 0;
+
+	#endregion
+
+	#region 对外接口
+
+	public void SetSpeed(float speed)
+	{
+		this.moveSpeed = speed;
+	}
 
 	#endregion
 
 	#region 移动机制
 
-	RaycastHit2D bottomHit, bottomRightHit, upHit;
-
-	private bool IsGround()
-	{
-		bool flag = false;
-
-		if (bottomRightHit && bottomRightHit.collider.tag == "Lift")
-			flag = true;
-		if (bottomHit && bottomHit.collider.tag == "Untagged")
-			flag = true;
-
-		return flag;
-	}
-
-	#endregion
+	RaycastHit2D[] bottomHit, upHit;
 
 	private enum Direction
 	{
@@ -45,6 +52,7 @@ public class Enemy : MonoBehaviour
 	};
 	Direction direction;
 
+	//玩家当前朝向向量
 	Vector3 Forward
 	{
 		get
@@ -53,34 +61,133 @@ public class Enemy : MonoBehaviour
 		}
 	}
 
-	void Start()
-    {
-		    
-    }
+	//是否检测楼梯
+	private bool castLift;
 
-    void Update()
-    {
-		//发射射线
+	//计时器相关
+	private float lift_timeVal;
+
+	private void GenRayCast()
+	{
 		Vector3 bottomPos = new Vector3(0, -bottomEdge) + transform.position;
 		Vector3 upPos = new Vector3(0, upEdge) + transform.position;
-		bottomHit = Physics2D.Raycast(bottomPos, Vector3.down, bottomRange);
-		bottomRightHit = Physics2D.Raycast(bottomPos + Forward * bottomRight, Vector3.down, bottomRange);
-		upHit = Physics2D.Raycast(upPos, Forward, forwardRange);
 
-		if (IsGround())
+		bottomHit = Physics2D.RaycastAll(bottomPos, Vector3.down, bottomRange);
+		upHit = Physics2D.RaycastAll(upPos, Forward, forwardRange);
+	}
+
+	private bool CheckGround()
+	{
+		bool flag = false;
+
+		Vector2 pos;
+
+		foreach(RaycastHit2D hit in bottomHit)
 		{
-			//校准脚下坐标
-			if (bottomRightHit && bottomRightHit.collider.tag == "Lift")
+			switch (hit.collider.tag)
 			{
-
-			}
-			else if (bottomHit && bottomHit.collider.tag == "Untagged")
-			{
-				
+				case "Plane":
+					if(flag == false)
+					{
+						pos = hit.point;
+						flag = true;
+					}
+					break;
+				case "Lift":
+					if( castLift && flag == false)
+					{
+						pos = hit.point;
+						flag = true;
+					}
+					break;
+				case "LiftGate":
+					if (!castLift && flag == false)
+					{
+						pos = hit.point;
+						flag = true;
+					}
+					break;
 			}
 		}
 
-    }
+		return flag;
+	}
+
+	private void Move(Direction direction)
+	{
+
+		if(direction == Direction.right)
+		{
+			sr.flipX = false;
+			
+				
+			transform.position = transform.position + Vector3.right * moveSpeed * Time.fixedDeltaTime;
+		}
+		else
+		{
+			sr.flipX = true;
+			
+			transform.position = transform.position + Vector3.left * moveSpeed * Time.fixedDeltaTime;
+		}
+	}
+
+	private void ApplyGravity()
+	{
+		float g = 9.8f;
+		verticalSpeed += g * Time.fixedDeltaTime;
+
+		Vector3 pos = transform.position;
+		pos.y -= verticalSpeed * Time.fixedDeltaTime;
+		transform.position = pos;
+
+	}
+
+	#endregion
+
+	#region 生命周期
+
+	void Awake()
+	{
+		sr = GetComponent<SpriteRenderer>();
+	}
+
+	void Start()
+	{
+
+	}
+
+	void Update()
+	{
+		//计时器相关 
+		if(lift_timeVal > 0)
+		{
+			lift_timeVal -= Time.deltaTime;
+		}
+		else
+		{
+			lift_timeVal = 0;
+			this.castLift = false;
+		}
+	}
+
+	void FixedUpdate()
+	{
+		//发射射线
+		GenRayCast();
+
+		//检查地面
+		if (CheckGround())
+		{
+			verticalSpeed = 0;
+		}
+		//下落
+		else
+		{
+			ApplyGravity();
+		}
+
+		TestMove();
+	}
 
 	private void OnDrawGizmos()
 	{
@@ -88,11 +195,29 @@ public class Enemy : MonoBehaviour
 		Vector3 upPos = new Vector3(0, upEdge) + transform.position;
 		Gizmos.color = Color.red;
 
-		Gizmos.DrawLine(bottomPos + bottomRight * Vector3.right, bottomPos + bottomRight * Forward + Vector3.down * bottomRange);
 		Gizmos.DrawLine(bottomPos, bottomPos + Vector3.down * bottomRange);
 		Gizmos.DrawLine(upPos, upPos + Forward * forwardRange);
 	}
 
-	
+	#endregion
+
+	private void TestMove()
+	{
+		float h = Input.GetAxis("Horizontal");
+		if(h > 0)
+		{
+			Move(Direction.right);
+		}
+		else if(h < 0)
+		{
+			Move(Direction.left);
+		}
+
+		if (Input.GetKeyDown(KeyCode.J))
+		{
+			
+		}
+
+	}
 
 }
