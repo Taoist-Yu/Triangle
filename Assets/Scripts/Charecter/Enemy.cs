@@ -72,6 +72,7 @@ public class Enemy : MonoBehaviour
 	//计时器相关
 	private float lift_timeVal;
 
+	//发射碰撞射线
 	private void GenRayCast()
 	{
 		Vector3 bottomPos = new Vector3(0, -bottomEdge) + transform.position;
@@ -81,6 +82,7 @@ public class Enemy : MonoBehaviour
 		upHit = Physics2D.RaycastAll(upPos, Forward, forwardRange);
 	}
 
+	//检查角色是否位于地面
 	private bool CheckGround()
 	{
 		bool flag = false;
@@ -121,6 +123,7 @@ public class Enemy : MonoBehaviour
 		return flag;
 	}
 
+	//移动角色(同时计算撞墙)
 	private void Move(Direction direction)
 	{
 		this.direction = direction;
@@ -170,6 +173,7 @@ public class Enemy : MonoBehaviour
 
 	}
 
+	//应用重力
 	private void ApplyGravity()
 	{
 		float g = 9.8f;
@@ -192,12 +196,12 @@ public class Enemy : MonoBehaviour
 
 	void Start()
 	{
-
+		AIStart();
 	}
 
 	void Update()
 	{
-
+		AIUpdate();
 
 
 	}
@@ -218,7 +222,7 @@ public class Enemy : MonoBehaviour
 			ApplyGravity();
 		}
 
-		TestMove();
+//		TestMove();
 	}
 
 	private void OnDrawGizmos()
@@ -236,6 +240,64 @@ public class Enemy : MonoBehaviour
 	}
 
 	#endregion
+
+	#region AI控制器
+
+	//状态
+	private Vector2 ai_target;
+	
+
+	private void AIStart()
+	{
+		StartCoroutine(FindPlayer());
+	}
+
+	private void AIUpdate()
+	{
+		//判断玩家和怪物是否在同一个楼层
+		if(Mathf.Abs(ai_target.y - transform.position.y) < 0.5f)		//同楼层
+		{
+			castLift = false;
+			if(ai_target.x > transform.position.x)
+			{
+				Move(Direction.right);
+			}
+			else
+			{
+				Move(Direction.left);
+			}
+		}
+		else														//不同楼层
+		{
+			castLift = true;
+			if(transform.position.x > 0)
+			{
+				Move(Direction.right);
+			}
+			else
+			{
+				Move(Direction.left);
+			}
+		}
+
+	}
+
+	//协程
+	IEnumerator FindPlayer()
+	{
+		while (true)
+		{
+			GameObject player = GameObject.FindGameObjectWithTag("Player");
+			if(player != null)
+			{
+				ai_target = player.transform.position;
+			}
+			yield return new WaitForSeconds(1);
+		}
+	}
+
+	#endregion
+
 
 	private void TestMove()
 	{
