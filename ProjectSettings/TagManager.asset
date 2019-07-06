@@ -10,6 +10,7 @@ TagManager:
   - Wall
   - LiftGate
   - HideSpace
+  - Organ
   layers:
   - Default
   - TransparentFX
