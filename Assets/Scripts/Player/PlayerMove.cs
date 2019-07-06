@@ -101,8 +101,8 @@ public class PlayerMove : MonoBehaviour
                 case "Plane"://============================地面
                     if (flag == false)
                     {
-                        pos = new Vector2(hit.point.x, hit.point.y - spot);
-                        transform.position = (Vector2)(pos + Vector2.up * (bottomEdge + bottomRange));
+                        pos = new Vector2(hit.point.x, hit.point.y + spot);
+                        transform.position = (Vector2)(pos);
                         flag = true;
                     }
                     break;
@@ -110,21 +110,21 @@ public class PlayerMove : MonoBehaviour
                     if (castLift && flag == false)
                     {
                         count = 0.1f;
-                        pos = new Vector2(hit.point.x, hit.point.y - spot);
+                        pos = new Vector2(hit.point.x, hit.point.y + spot);
 
-                        transform.position = (Vector2)(pos + Vector2.up * (bottomEdge + bottomRange));
+                        transform.position = (Vector2)(pos);
                         flag = true;
                     }
                     break;
                 case "Gate"://---------------------------------楼梯门
                     if (castLiftGate && flag == false)
                     {
-                        pos = new Vector2(hit.point.x, hit.point.y - spot);
+                        pos = new Vector2(hit.point.x, hit.point.y + spot);
 
 						castLift = true;
 						count = 0.1f;
 
-                        transform.position = (Vector2)(pos + Vector2.up * (bottomEdge + bottomRange));
+                        transform.position = (Vector2)(pos);
                         flag = true;
 
                     }
@@ -224,7 +224,11 @@ public class PlayerMove : MonoBehaviour
 
         Gizmos.DrawLine(bottomPos, bottomPos + Vector3.down * bottomRange);
         Gizmos.DrawLine(upPos, upPos + Forward * forwardRange);
-    }
+
+		Gizmos.color = Color.yellow;
+		Gizmos.DrawSphere(transform.position + Vector3.down * spot, 0.1f);
+
+	}
 
     #endregion
 
