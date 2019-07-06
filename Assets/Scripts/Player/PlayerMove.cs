@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using DG.Tweening;//==================DOtween命名空间
+
 public class PlayerMove : MonoBehaviour
 {
     #region 初始化
@@ -34,7 +36,7 @@ public class PlayerMove : MonoBehaviour
 
     #region 玩家属性参数
 
-    private float moveSpeed = 10.0f;
+    private float moveSpeed = 5.0f;
 
     private float verticalSpeed = 0;
 
@@ -82,6 +84,10 @@ public class PlayerMove : MonoBehaviour
         upHit = Physics2D.RaycastAll(upPos, Forward, forwardRange);
     }
 
+    //是否检测楼梯
+    private bool castLift = false;
+
+    bool castLiftGate = true;
     private bool CheckGround()
     {
         bool flag = false;
@@ -173,27 +179,22 @@ public class PlayerMove : MonoBehaviour
 
     float count = 0;
     float castLiftCount = 0;
-    //是否检测楼梯
-    private bool castLift = false;
-
-    bool castLiftGate = true;
     void Update()
     {
         count -= Time.deltaTime;
+        castLiftCount -= Time.deltaTime;
         if (count < 0)
         {
             count = 0;
             castLift = false;
-            //castLiftGate = false;
         }
-        castLiftCount -= Time.deltaTime;
         if (castLiftCount < 0)
         {
             castLiftCount = 0;
             castLiftGate = true;
         }
-        Debug.Log(castLift);
-        Debug.Log(castLiftGate);
+        //Debug.Log(castLift);
+        //Debug.Log(castLiftGate);
 
     }
 
@@ -299,6 +300,19 @@ public class PlayerMove : MonoBehaviour
                 organ.GetComponent<Organ>().OnUse(this.gameObject);
             }
         }
-        #endregion
     }
+    #endregion
+
+    #region 玩家能量值
+
+    GameObject Energy;
+    void playerEnergy()
+    {
+        Energy = GameObject.Find("PlayerEnergy");
+
+
+    }
+
+
+    #endregion
 }

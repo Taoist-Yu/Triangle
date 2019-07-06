@@ -10,7 +10,6 @@ public class PlayerHide : MonoBehaviour
     {
         if (isHide == false && other.transform.tag == "HideSpace")
         {
-
             if (Input.GetKey(KeyCode.E))
             {
                 //playerLight.LightDown();
