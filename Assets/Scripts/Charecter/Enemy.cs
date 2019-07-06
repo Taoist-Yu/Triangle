@@ -30,7 +30,7 @@ public class Enemy : MonoBehaviour
 
 	#region 敌人属性参数
 
-	private float moveSpeed = 3;
+	private float moveSpeed = 5;
 
 	private float verticalSpeed = 0;
 
@@ -55,7 +55,7 @@ public class Enemy : MonoBehaviour
 		right,
 		left
 	};
-	Direction direction;
+	Direction direction = Direction.left;
 
 	//玩家当前朝向向量
 	Vector3 Forward
@@ -66,11 +66,11 @@ public class Enemy : MonoBehaviour
 		}
 	}
 
-	//是否检测楼梯
-	private bool castLift;
+	//上一帧是否是检测到楼梯
+	private bool lastCastLift = false;
 
-	//计时器相关
-	private float lift_timeVal;
+	//是否检测楼梯
+	private bool castLift = false;
 
 	//发射碰撞射线
 	private void GenRayCast()
@@ -99,6 +99,7 @@ public class Enemy : MonoBehaviour
 						pos = hit.point;
 						transform.position = pos - footPos;
 						flag = true;
+						lastCastLift = false;
 					}
 					break;
 				case "Lift":
@@ -107,6 +108,22 @@ public class Enemy : MonoBehaviour
 						pos = hit.point;
 						transform.position = pos - footPos;
 						flag = true;
+						//若敌人在一楼，特判
+						if(!lastCastLift && transform.position.y < 0 && Mathf.Abs(transform.position.x) < 10)
+						{
+							if (direction == Direction.left)
+							{
+								direction = Direction.right;
+								sr.flipX = false;
+							}
+							else
+							{
+								sr.flipX = true;
+								direction = Direction.left;
+							}
+								
+						}
+						lastCastLift = true;
 					}
 					break;
 				case "Gate":
@@ -115,6 +132,7 @@ public class Enemy : MonoBehaviour
 						pos = hit.point;
 						transform.position = pos - footPos;
 						flag = true;
+						lastCastLift = false;
 					}
 					break;
 			}
@@ -140,7 +158,10 @@ public class Enemy : MonoBehaviour
 				{
 					if (hit.collider.tag == "Wall")
 					{
-						//有墙壁，终止移动
+						//有墙壁,反向,更新爬梯状态
+						sr.flipX = true;
+						this.direction = Direction.left;
+						castLift = !castLift;
 						return;
 					}
 				}
@@ -160,7 +181,10 @@ public class Enemy : MonoBehaviour
 				{
 					if (hit.collider.tag == "Wall")
 					{
-						//有墙壁，终止移动
+						//有墙壁，终止移动,更新爬梯状态
+						sr.flipX = false;
+						this.direction = Direction.right;
+						castLift = !castLift;
 						return;
 					}
 				}
@@ -169,8 +193,12 @@ public class Enemy : MonoBehaviour
 			transform.position = transform.position + Vector3.left * moveSpeed * Time.fixedDeltaTime;
 		}
 
+	}
 
-
+	//向前移动
+	private void Move()
+	{
+		Move(this.direction);
 	}
 
 	//应用重力
@@ -203,7 +231,6 @@ public class Enemy : MonoBehaviour
 	{
 		AIUpdate();
 
-
 	}
 
 	void FixedUpdate()
@@ -222,7 +249,6 @@ public class Enemy : MonoBehaviour
 			ApplyGravity();
 		}
 
-//		TestMove();
 	}
 
 	private void OnDrawGizmos()
@@ -238,6 +264,16 @@ public class Enemy : MonoBehaviour
 		Gizmos.DrawSphere(footPos + (Vector2)transform.position, 0.1f);
 
 		//AI
+		Gizmos.color = Color.green;
+		foreach (Vector3 pos in lifts)
+		{
+			Gizmos.DrawCube(pos, new Vector3(0.5f, 0.5f, 0.5f));
+		}
+		Gizmos.color = Color.red;
+		foreach (Vector3 pos in gates)
+		{
+			Gizmos.DrawCube(pos, new Vector3(0.5f, 0.5f, 0.5f));
+		}
 
 	}
 
@@ -248,7 +284,8 @@ public class Enemy : MonoBehaviour
 	//引用
 	[Header("AI控制器对场景物品的引用")]
 	public GameObject[] lamps;
-	public GameObject[] lifts;
+	public Vector3[] lifts;
+	public Vector3[] gates;
 
 	//状态
 	private Vector2 ai_target;
@@ -260,27 +297,7 @@ public class Enemy : MonoBehaviour
 
 	private void AIUpdate()
 	{
-		//判断目标和怪物是否在同一个楼层
-		if(GetFloor(transform.position.y) == GetFloor(ai_target.y))		//同楼层
-		{
-			int floor = GetFloor(ai_target.y);
-			if(!(floor == 1))
-			{
-
-			}
-		}
-		else														//不同楼层
-		{
-			castLift = true;
-			if(transform.position.x > 0)
-			{
-				Move(Direction.right);
-			}
-			else
-			{
-				Move(Direction.left);
-			}
-		}
+		Move();
 
 	}
 
