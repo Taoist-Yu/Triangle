@@ -10,11 +10,14 @@ public class PlayerHide : MonoBehaviour
     {
         if (isHide == false && other.transform.tag == "HideSpace")
         {
+
             if (Input.GetKey(KeyCode.E))
             {
-                playerLight.LightDown();
+                //playerLight.LightDown();
                 //玩家隐藏
                 isHide = true;
+
+                //--------UI提示信息
             }
             else
             {

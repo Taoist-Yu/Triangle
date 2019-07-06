@@ -165,7 +165,7 @@ public class PlayerMove : MonoBehaviour
     GameObject organ;
     void Start()
     {
-        organ = GameObject.FindWithTag("Organ");
+        //organ = GameObject.FindWithTag("Organ");
         player = this.GetComponent<PlayerHide>();
     }
 
@@ -293,6 +293,7 @@ public class PlayerMove : MonoBehaviour
     {
         if (other.transform.tag == "Organ")
         {
+            organ = other.GetComponent<Organ>().gameObject;
             if (Input.GetKeyDown(KeyCode.E))
             {
                 organ.GetComponent<Organ>().OnUse(this.gameObject);
