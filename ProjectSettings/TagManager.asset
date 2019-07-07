@@ -12,6 +12,7 @@ TagManager:
   - HideSpace
   - Organ
   - PlayerEnergy
+  - 2DMask
   layers:
   - Default
   - TransparentFX

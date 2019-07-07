@@ -95,6 +95,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   upEdge: 0.9
   bottomEdge: 1
-  bottomRange: 0.5
-  forwardRange: 0.7
-  bottomRight: 0.4
+  bottomRange: 1.5
+  forwardRange: 3
+  footPos: {x: 0, y: -2}
+  lamps: []
+  lifts: []
+  gates: []
+  beat_clips:
+  - {fileID: 8300000, guid: 815b76ebbce48ba438d6d19b968aaffb, type: 3}
+  - {fileID: 8300000, guid: 97658aba0178f8f4396955c8ed977d44, type: 3}
+  - {fileID: 8300000, guid: 77c3da98fc301ac4bafdd41250f57486, type: 3}
+  cry_clips:
+  - {fileID: 8300000, guid: 1f962ffdc3a036f49a4515b499355e7d, type: 3}
+  - {fileID: 8300000, guid: cb979f91da1751c40b1e05a42e0be917, type: 3}
