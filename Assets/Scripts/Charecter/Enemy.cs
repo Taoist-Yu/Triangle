@@ -36,6 +36,8 @@ public class Enemy : MonoBehaviour
 
 	private float verticalSpeed = 0;
 
+	private bool isEnemyEnable = false;
+
 	#endregion
 
 	#region 对外接口
@@ -57,6 +59,12 @@ public class Enemy : MonoBehaviour
 		if(!audioSource.isPlaying)
 			audioSource.Play();
 
+	}
+
+	public void EnableEnemy()
+	{
+		isEnemyEnable = true;
+		transform.position = new Vector3(35, -9, 0);
 	}
 
 	#endregion
@@ -260,11 +268,16 @@ public class Enemy : MonoBehaviour
 
 	void Update()
 	{
+		if (!isEnemyEnable)
+			return;
 		AIUpdate();
 	}
 
 	void FixedUpdate()
 	{
+		if (!isEnemyEnable)
+			return;
+
 		//发射射线
 		GenRayCast();
 
@@ -347,7 +360,11 @@ public class Enemy : MonoBehaviour
 			}
 			else if(hit.transform.CompareTag("Player"))
 			{
-				preKillPlayer(hit.transform.gameObject);
+				if (!hit.transform.GetComponent<PlayerHide>().isHide)
+				{
+					preKillPlayer(hit.transform.gameObject);
+				}
+				
 			}
 		}
 		if (flag)

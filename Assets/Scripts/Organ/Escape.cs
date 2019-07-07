@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Escape : Organ
 {
@@ -10,17 +11,23 @@ public class Escape : Organ
 
 	private float timeVal = 0;
 
+	private Text text;
+
 	public enum Status
 	{
 		close,			//电梯关闭中
 		wait,			//等电梯
 		open			//已开启
 	}
-	Status status;
+	Status status = Status.close;
+
+	void Awake()
+	{
+		text = transform.Find("Canvas/Text").GetComponent<Text>();
+	}
 
     public override void OnUse(GameObject player)
     {
-		//===========
 		switch (status)
 		{
 			case Status.close:
@@ -44,6 +51,16 @@ public class Escape : Organ
 				timeVal = 0;
 				this.Open();
 			}
+
+			int floor = (int)((timeVal / timeAll) * 20.0f);
+			if(floor >= 10)
+			{
+				text.text = floor.ToString();
+			}
+			else
+			{
+				text.text = "0" + floor.ToString();
+			}
 		}
 
 
@@ -53,6 +70,15 @@ public class Escape : Organ
 	{
 		timeVal = timeAll;
 		status = Status.wait;
+
+
+		StartCoroutine(GenEnemy());
+	}
+
+	IEnumerator GenEnemy()
+	{
+		yield return new WaitForSeconds(3.0f);
+		GameObject.FindGameObjectWithTag("Enemy").GetComponent<Enemy>().EnableEnemy();
 	}
 
 	void Open()

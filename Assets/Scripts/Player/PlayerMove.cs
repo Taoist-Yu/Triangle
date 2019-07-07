@@ -136,17 +136,41 @@ public class PlayerMove : MonoBehaviour
     }
     private void Move(Direction direction)
     {
+		this.direction = direction;
         //移动玩家
         if (direction == Direction.right)
         {
             sr.flipX = false;
-
-            transform.position = transform.position + Vector3.right * moveSpeed * Time.fixedDeltaTime;
+			//检测墙壁
+			if (upHit.Length != 0)
+			{
+				Vector3 pos = Vector3.zero;
+				foreach (RaycastHit2D hit in upHit)
+				{
+					if (hit.collider.tag == "Wall")
+					{
+						return;
+					}
+				}
+			}
+			transform.position = transform.position + Vector3.right * moveSpeed * Time.fixedDeltaTime;
         }
         else
         {
             sr.flipX = true;
-            transform.position = transform.position + Vector3.left * moveSpeed * Time.fixedDeltaTime;
+			//检测墙壁
+			if (upHit.Length != 0)
+			{
+				Vector3 pos = Vector3.zero;
+				foreach (RaycastHit2D hit in upHit)
+				{
+					if (hit.collider.tag == "Wall")
+					{
+						return;
+					}
+				}
+			}
+			transform.position = transform.position + Vector3.left * moveSpeed * Time.fixedDeltaTime;
         }
         //移动
     }
