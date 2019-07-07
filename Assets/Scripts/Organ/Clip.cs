@@ -8,7 +8,7 @@ using DG.Tweening;
 
 public class Clip : Organ
 {
-	GameObject player;
+	GameObject player = null;
 	Vector3 targetPos;
 
 	[Header("碎片可存在的总时间")]
@@ -19,13 +19,19 @@ public class Clip : Organ
 	public override void OnUse(GameObject player)
 	{
 		this.player = player;
-		player.GetComponent<PlayerMove>().addClip();
+		player.GetComponent<PlayerMove>().addClip(gameObject);
+
 
 		transform.DOScale(0.4f, 1.0f);
 
 		//重置计时器
 		timeVal = timeAll;
 		
+	}
+
+	public void Heal(GameObject player)
+	{
+
 	}
 
 	void Start()
@@ -57,6 +63,14 @@ public class Clip : Organ
 		}
 
 
+	}
+
+	void OnDestroy()
+	{
+		if(player != null)
+		{
+			player.GetComponent<PlayerMove>().useClip();
+		}
 	}
 
 }

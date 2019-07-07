@@ -18,10 +18,15 @@ public class PlayerEnergy : MonoBehaviour
         playerMove = this.transform.GetComponent<PlayerMove>();
 
         enemy = GameObject.FindGameObjectWithTag("Enemy").GetComponent<Enemy>();
-        //GameObject.FindGameObjectWithTag
+		//GameObject.FindGameObjectWithTag
+
+		this.playDeathTime = timeAll;
 
     }
-    public float playDeathTime = 100;
+
+	[Header("玩家拥有的总时间")]
+	public float timeAll = 100;
+    float playDeathTime;
     //玩家死亡时间
     float deathTime = 0;
     //float playDeathTime = 100;
@@ -42,6 +47,12 @@ public class PlayerEnergy : MonoBehaviour
 
     #region 玩家能量值
 
+	public void Reply()
+	{
+		playDeathTime = timeAll;
+
+	}
+
     void playerEnergy()
     {
         float flag = 0;
@@ -57,7 +68,7 @@ public class PlayerEnergy : MonoBehaviour
         }
         if (playDeathTime >= 60)
         {
-            enemy.SetSpeed(playerMove.moveSpeed * 1.0f, 1);
+			enemy.SetSpeed(playerMove.moveSpeed * 1.0f, 0);
             //playerLight.HighLevel();
             playerLight.HighLevel();
             flag = 10 - playDeathTime / 10.0f;
@@ -68,7 +79,7 @@ public class PlayerEnergy : MonoBehaviour
         }
         if (playDeathTime < 60 && playDeathTime >= 20)
         {
-            enemy.SetSpeed(playerMove.moveSpeed * 1.5f, 2);
+			enemy.SetSpeed(playerMove.moveSpeed * 1.5f, 1);
             playerLight.NormalLevel();
             flag = 10 - playDeathTime / 10.0f;
             for (int i = Energy.Length - 1; i > Energy.Length - flag; i--)
@@ -79,7 +90,7 @@ public class PlayerEnergy : MonoBehaviour
         }
         if (playDeathTime < 20)
         {
-            enemy.SetSpeed(playerMove.moveSpeed * 2.0f, 3);
+			enemy.SetSpeed(playerMove.moveSpeed * 2.0f, 2);
             playerLight.LowLevel();
             flag = 10 - playDeathTime / 10.0f;
             for (int i = Energy.Length - 1; i > Energy.Length - flag; i--)

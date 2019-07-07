@@ -15,6 +15,9 @@ public class Lightning : MonoBehaviour
 	float lightScale = 0;
 	float intensity;
 
+	[Header("雷声")]
+	public AudioClip m_clip;
+
 	void Awake()
 	{
 		lightning = transform.Find("Lightning").gameObject;
@@ -78,6 +81,8 @@ public class Lightning : MonoBehaviour
 		s.Append(DOTween.To(() => lightScale, x => lightScale = x, 0.3f, 0.1f));
 		s.Append(DOTween.To(() => lightScale, x => lightScale = x, 1.0f, 0.05f));
 		s.Append(DOTween.To(() => lightScale, x => lightScale = x, 0.0f, 1.0f));
+
+		AudioPlayer.Instance.PlayClip(m_clip);
 
 	}
 

@@ -136,17 +136,41 @@ public class PlayerMove : MonoBehaviour
     }
     private void Move(Direction direction)
     {
+		this.direction = direction;
         //移动玩家
         if (direction == Direction.right)
         {
             sr.flipX = false;
-
-            transform.position = transform.position + Vector3.right * moveSpeed * Time.fixedDeltaTime;
+			//检测墙壁
+			if (upHit.Length != 0)
+			{
+				Vector3 pos = Vector3.zero;
+				foreach (RaycastHit2D hit in upHit)
+				{
+					if (hit.collider.tag == "Wall")
+					{
+						return;
+					}
+				}
+			}
+			transform.position = transform.position + Vector3.right * moveSpeed * Time.fixedDeltaTime;
         }
         else
         {
             sr.flipX = true;
-            transform.position = transform.position + Vector3.left * moveSpeed * Time.fixedDeltaTime;
+			//检测墙壁
+			if (upHit.Length != 0)
+			{
+				Vector3 pos = Vector3.zero;
+				foreach (RaycastHit2D hit in upHit)
+				{
+					if (hit.collider.tag == "Wall")
+					{
+						return;
+					}
+				}
+			}
+			transform.position = transform.position + Vector3.left * moveSpeed * Time.fixedDeltaTime;
         }
         //移动
     }
@@ -199,9 +223,17 @@ public class PlayerMove : MonoBehaviour
             castLiftGate = true;
         }
 
+		//玩家尝试治愈自己
+		if (this.checkClip())
+		{
+			if (Input.GetKeyDown(KeyCode.Space))
+			{
+				this.useClip();
+				GetComponent<PlayerEnergy>().Reply();
+				GetComponent<PlayerAudio>().PlayHeal();
+			}
 
-        //Debug.Log(castLift);
-        //Debug.Log(castLiftGate);
+		}
 
     }
 
@@ -241,17 +273,20 @@ public class PlayerMove : MonoBehaviour
 
     private void playerMove()
     {
+		PlayerAudio playerAudio = GetComponent<PlayerAudio>();
+
+
         float xDelta = Input.GetAxis("Horizontal");
         if (xDelta > 0)
         {
             Move(Direction.right);
-
+			playerAudio.PlayWalk();
             animator.SetBool("ToRunAnim", true);
         }
         else if (xDelta < 0)
         {
             Move(Direction.left);
-
+			playerAudio.PlayWalk();
             animator.SetBool("ToRunAnim", true);
         }
         else
@@ -274,13 +309,15 @@ public class PlayerMove : MonoBehaviour
         }
 
     }
-    #endregion
+	#endregion
 
-    #region 碎片的增删查
+	#region 碎片的增删查
 
+	GameObject clip;
     bool isClip = false;
-    public void addClip()
+    public void addClip(GameObject clip)
     {
+		this.clip = clip;
         if (isClip == false)
         {
             isClip = true;
@@ -299,6 +336,8 @@ public class PlayerMove : MonoBehaviour
         if (checkClip() == true)
         {
             isClip = false;
+			Destroy(clip);
+			clip = null;
         }
     }
 
