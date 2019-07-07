@@ -18,14 +18,26 @@ public class PlayerHide : MonoBehaviour
 
                 //--------UI提示信息
             }
-            else
-            {
-                playerLight.LightUp();
-                print("LightUp");
-                isHide = false;
-            }
-        }
-    }
+			else
+			{
+				playerLight.LightUp();
+				print("LightUp");
+				isHide = false;
+			}
+		}
+
+	}
+
+	void OnTriggerExit2D(Collider2D other)
+	{
+		if (other.transform.tag == "HideSpace")
+		{
+				playerLight.LightUp();
+				print("LightUp");
+				isHide = false;
+		}
+	}
+
     void Awake()
     {
         playerLight = transform.Find("PlayerLight").GetComponent<PlayerLight>();
