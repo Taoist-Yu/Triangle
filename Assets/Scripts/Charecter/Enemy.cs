@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
+using UnityEngine.SceneManagement;
 
 public class Enemy : MonoBehaviour
 {
@@ -38,9 +40,17 @@ public class Enemy : MonoBehaviour
 
 	#region 对外接口
 
-	public void SetSpeed(float speed)
+	/// <summary>
+	/// 设置速度与心跳声
+	/// </summary>
+	/// <param name="speed"></param>移动速度
+	/// <param name="beatLevel"></param>心跳声速等级(0,1,2)
+	public void SetSpeed(float speed, int beatLevel)
 	{
 		this.moveSpeed = speed;
+
+		audioSource.clip = beat_clips[beatLevel];
+
 	}
 
 	#endregion
@@ -231,17 +241,20 @@ public class Enemy : MonoBehaviour
 	void Awake()
 	{
 		sr = GetComponent<SpriteRenderer>();
+		audioSource = GetComponent<AudioSource>();
 	}
 
 	void Start()
 	{
 		AIStart();
+		cry_clip = cry_clips[Random.Range(0, 2)]; ;
+		audioSource.clip = beat_clips[0];
+		audioSource.Play();
 	}
 
 	void Update()
 	{
 		AIUpdate();
-
 	}
 
 	void FixedUpdate()
@@ -310,7 +323,7 @@ public class Enemy : MonoBehaviour
 	{
 		Move();
 
-		//检测前方是否有激活灯
+		//检测前方是否有激活灯和玩家
 		RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, Forward, 5.0f);
 		bool flag = false;
 		foreach(var hit in hits)
@@ -325,6 +338,11 @@ public class Enemy : MonoBehaviour
 						flag = true;
 					}
 				}
+			}
+			else if(hit.transform.CompareTag("Player"))
+			{
+				preKillPlayer(hit.transform.gameObject);
+				Debug.Log(666);
 			}
 		}
 		if (flag)
@@ -364,6 +382,51 @@ public class Enemy : MonoBehaviour
 			yield return new WaitForSeconds(1);
 		}
 	}
+	
+	private void preKillPlayer(GameObject player)
+	{
+		Sequence s = DOTween.Sequence();
+
+		audioSource.clip = cry_clip;
+		if (!isCryPlayed)
+		{
+			audioSource.Play();
+			audioSource.loop = false;
+			isCryPlayed = true;
+		}
+		
+
+		s.Append(transform.DOMove(player.transform.position, 0.5f));
+		SpriteRenderer _sr = GameObject.FindGameObjectWithTag("2DMask").GetComponent<SpriteRenderer>();
+		s.Append(_sr.
+			DOColor(new Color(_sr.color.r, _sr.color.g, _sr.color.b, 1), 0.3f));
+
+
+		StartCoroutine(KillPlayer(player));
+	}
+
+	IEnumerator KillPlayer(GameObject player)
+	{
+		yield return new WaitForSeconds(0.3f);
+
+		player.transform.Find("PlayerLight").GetComponent<PlayerLight>().LightDown();
+
+		yield return new WaitForSeconds(1);
+
+		//加载新场景
+
+	}
+
+	#endregion
+
+	#region 音效支持
+
+	AudioSource audioSource;
+	public AudioClip[] beat_clips;
+	public AudioClip[] cry_clips;
+	public AudioClip cry_clip;
+
+	bool isCryPlayed = false;
 
 	#endregion
 
