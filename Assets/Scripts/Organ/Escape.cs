@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Escape : Organ
 {
@@ -30,6 +31,9 @@ public class Escape : Organ
 				break;
 			case Status.open:
 				PlayerEscape(player);
+
+                SceneManager.LoadScene("黑屏场景", LoadSceneMode.Single);
+
 				break;
 		}
     }

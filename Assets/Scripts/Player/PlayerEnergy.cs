@@ -57,7 +57,7 @@ public class PlayerEnergy : MonoBehaviour
         }
         if (playDeathTime >= 60)
         {
-            enemy.SetSpeed(playerMove.moveSpeed * 1.0f);
+            enemy.SetSpeed(playerMove.moveSpeed * 1.0f, 1);
             //playerLight.HighLevel();
             playerLight.HighLevel();
             flag = 10 - playDeathTime / 10.0f;
@@ -68,7 +68,7 @@ public class PlayerEnergy : MonoBehaviour
         }
         if (playDeathTime < 60 && playDeathTime >= 20)
         {
-            enemy.SetSpeed(playerMove.moveSpeed * 1.5f);
+            enemy.SetSpeed(playerMove.moveSpeed * 1.5f, 2);
             playerLight.NormalLevel();
             flag = 10 - playDeathTime / 10.0f;
             for (int i = Energy.Length - 1; i > Energy.Length - flag; i--)
@@ -79,7 +79,7 @@ public class PlayerEnergy : MonoBehaviour
         }
         if (playDeathTime < 20)
         {
-            enemy.SetSpeed(playerMove.moveSpeed * 2.0f);
+            enemy.SetSpeed(playerMove.moveSpeed * 2.0f, 3);
             playerLight.LowLevel();
             flag = 10 - playDeathTime / 10.0f;
             for (int i = Energy.Length - 1; i > Energy.Length - flag; i--)
