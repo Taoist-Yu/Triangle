@@ -12,7 +12,7 @@ TagManager:
   - HideSpace
   - Organ
   - PlayerEnergy
-  - 2DMask
+  - Enemy
   layers:
   - Default
   - TransparentFX

@@ -99,29 +99,29 @@ public class PlayerLight : MonoBehaviour
 		}
 
 
-		//test
-		if (Input.GetKeyDown(KeyCode.J))
-		{
-			this.HighLevel();
-		}
-		if (Input.GetKeyDown(KeyCode.K))
-		{
-			this.NormalLevel();
-		}
-		if (Input.GetKeyDown(KeyCode.L))
-		{
-			this.LowLevel();
-		}
-		if (Input.GetKeyDown(KeyCode.Q))
-		{
-			this.LightUp();
-		}
-		if (Input.GetKeyDown(KeyCode.E))
-		{
-			this.LightDown();
-		}
+		////test
+		//if (Input.GetKeyDown(KeyCode.J))
+		//{
+		//	this.HighLevel();
+		//}
+		//if (Input.GetKeyDown(KeyCode.K))
+		//{
+		//	this.NormalLevel();
+		//}
+		//if (Input.GetKeyDown(KeyCode.L))
+		//{
+		//	this.LowLevel();
+		//}
+		//if (Input.GetKeyDown(KeyCode.Q))
+		//{
+		//	this.LightUp();
+		//}
+		//if (Input.GetKeyDown(KeyCode.E))
+		//{
+		//	this.LightDown();
+		//}
 
-		Debug.Log(lightScale);
+		//Debug.Log(lightScale);
 
 
 	}
