@@ -226,7 +226,7 @@ public class PlayerMove : MonoBehaviour
 		//玩家尝试治愈自己
 		if (this.checkClip())
 		{
-			if (Input.GetKeyDown(KeyCode.F))
+			if (Input.GetKeyDown(KeyCode.Space))
 			{
 				this.useClip();
 				GetComponent<PlayerEnergy>().Reply();
