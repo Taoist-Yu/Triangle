@@ -35,8 +35,8 @@ public class PlayerMove : MonoBehaviour
     #endregion
 
     #region 玩家属性参数
-
-    private float moveSpeed = 5.0f;
+    [HideInInspector]
+    public float moveSpeed = 5.0f;
 
     private float verticalSpeed = 0;
 
@@ -146,7 +146,6 @@ public class PlayerMove : MonoBehaviour
         else
         {
             sr.flipX = true;
-
             transform.position = transform.position + Vector3.left * moveSpeed * Time.fixedDeltaTime;
         }
         //移动
@@ -171,10 +170,13 @@ public class PlayerMove : MonoBehaviour
         sr = GetComponent<SpriteRenderer>();
     }
     GameObject organ;
+    Animator animator;
     void Start()
     {
         //organ = GameObject.FindWithTag("Organ");
         player = this.GetComponent<PlayerHide>();
+
+        animator = this.transform.GetComponent<Animator>();
     }
 
     //---------
@@ -182,8 +184,6 @@ public class PlayerMove : MonoBehaviour
     float count = 0;
     float castLiftCount = 0;
 
-    //玩家死亡时间
-    int deathTime = 100;
     void Update()
     {
         count -= Time.deltaTime;
@@ -199,10 +199,7 @@ public class PlayerMove : MonoBehaviour
             castLiftGate = true;
         }
 
-        if (deathTime <= 100)
-        {
 
-        }
         //Debug.Log(castLift);
         //Debug.Log(castLiftGate);
 
@@ -248,12 +245,20 @@ public class PlayerMove : MonoBehaviour
         if (xDelta > 0)
         {
             Move(Direction.right);
+
+            animator.SetBool("ToRunAnim", true);
         }
         else if (xDelta < 0)
         {
             Move(Direction.left);
-        }
 
+            animator.SetBool("ToRunAnim", true);
+        }
+        else
+        {
+            animator.SetTrigger("Run2Stand");
+            animator.SetBool("ToRunAnim", false);
+        }
         if (Input.GetKey(KeyCode.W))
         {
             count = 0.1f;
@@ -267,6 +272,7 @@ public class PlayerMove : MonoBehaviour
             count = 0.1f;
             castLift = true;
         }
+
     }
     #endregion
 
@@ -316,20 +322,4 @@ public class PlayerMove : MonoBehaviour
     }
     #endregion
 
-    #region 玩家能量值
-
-    //预制体获取
-    GameObject Energy;
-
-    void playerEnergy()
-    {
-        //找到玩家的能量
-        Energy = GameObject.Find("PlayerEnergy");
-
-
-
-    }
-
-
-    #endregion
 }

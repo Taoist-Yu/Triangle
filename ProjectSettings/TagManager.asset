@@ -12,6 +12,7 @@ TagManager:
   - HideSpace
   - Organ
   - PlayerEnergy
+  - Enemy
   layers:
   - Default
   - TransparentFX
