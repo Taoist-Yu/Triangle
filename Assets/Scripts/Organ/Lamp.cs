@@ -27,6 +27,7 @@ public class Lamp : Organ
 	{
 		if (this.CheckClip(player))
 		{
+			player.GetComponent<PlayerAudio>().PlayLightup();
 			EnableLight();
 		}
 	}

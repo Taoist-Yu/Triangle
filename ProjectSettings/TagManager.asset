@@ -13,6 +13,7 @@ TagManager:
   - Organ
   - PlayerEnergy
   - Enemy
+  - 2DMask
   layers:
   - Default
   - TransparentFX

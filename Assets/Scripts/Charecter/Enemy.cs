@@ -47,9 +47,15 @@ public class Enemy : MonoBehaviour
 	/// <param name="beatLevel"></param>心跳声速等级(0,1,2)
 	public void SetSpeed(float speed, int beatLevel)
 	{
+		if (isPlayerDeath)
+			return;
+
 		this.moveSpeed = speed;
 
 		audioSource.clip = beat_clips[beatLevel];
+		
+		if(!audioSource.isPlaying)
+			audioSource.Play();
 
 	}
 
@@ -342,7 +348,6 @@ public class Enemy : MonoBehaviour
 			else if(hit.transform.CompareTag("Player"))
 			{
 				preKillPlayer(hit.transform.gameObject);
-				Debug.Log(666);
 			}
 		}
 		if (flag)
@@ -388,11 +393,11 @@ public class Enemy : MonoBehaviour
 		Sequence s = DOTween.Sequence();
 
 		audioSource.clip = cry_clip;
-		if (!isCryPlayed)
+		if (!isPlayerDeath)
 		{
 			audioSource.Play();
 			audioSource.loop = false;
-			isCryPlayed = true;
+			isPlayerDeath = true;
 		}
 		
 
@@ -426,7 +431,7 @@ public class Enemy : MonoBehaviour
 	public AudioClip[] cry_clips;
 	public AudioClip cry_clip;
 
-	bool isCryPlayed = false;
+	bool isPlayerDeath = false;
 
 	#endregion
 

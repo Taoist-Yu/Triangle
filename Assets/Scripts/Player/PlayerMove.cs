@@ -199,9 +199,17 @@ public class PlayerMove : MonoBehaviour
             castLiftGate = true;
         }
 
+		//玩家尝试治愈自己
+		if (this.checkClip())
+		{
+			if (Input.GetKeyDown(KeyCode.F))
+			{
+				this.useClip();
+				GetComponent<PlayerEnergy>().Reply();
+				GetComponent<PlayerAudio>().PlayHeal();
+			}
 
-        //Debug.Log(castLift);
-        //Debug.Log(castLiftGate);
+		}
 
     }
 
@@ -241,17 +249,20 @@ public class PlayerMove : MonoBehaviour
 
     private void playerMove()
     {
+		PlayerAudio playerAudio = GetComponent<PlayerAudio>();
+
+
         float xDelta = Input.GetAxis("Horizontal");
         if (xDelta > 0)
         {
             Move(Direction.right);
-
+			playerAudio.PlayWalk();
             animator.SetBool("ToRunAnim", true);
         }
         else if (xDelta < 0)
         {
             Move(Direction.left);
-
+			playerAudio.PlayWalk();
             animator.SetBool("ToRunAnim", true);
         }
         else
@@ -274,13 +285,15 @@ public class PlayerMove : MonoBehaviour
         }
 
     }
-    #endregion
+	#endregion
 
-    #region 碎片的增删查
+	#region 碎片的增删查
 
+	GameObject clip;
     bool isClip = false;
-    public void addClip()
+    public void addClip(GameObject clip)
     {
+		this.clip = clip;
         if (isClip == false)
         {
             isClip = true;
@@ -299,6 +312,8 @@ public class PlayerMove : MonoBehaviour
         if (checkClip() == true)
         {
             isClip = false;
+			Destroy(clip);
+			clip = null;
         }
     }
 
