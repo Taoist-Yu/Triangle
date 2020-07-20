@@ -32,13 +32,16 @@ public class Lightning : MonoBehaviour
 
     IEnumerator GenLightning()
 	{
-		
-
+		int gencot = 1;
 		while (true)
 		{
 			yield return new WaitForSeconds(duration);
 
-			GenClip();
+			if (--gencot == 0)
+			{
+				GenClip();
+				gencot = 3;
+			}
 			LightningEffect();
 		}
 		

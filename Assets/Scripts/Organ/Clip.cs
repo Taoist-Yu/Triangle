@@ -12,7 +12,7 @@ public class Clip : Organ
 	Vector3 targetPos;
 
 	[Header("碎片可存在的总时间")]
-	public float timeAll = 3;
+	public float timeAll = 10;
 
 	float timeVal;		//生命计时器
 
@@ -52,16 +52,16 @@ public class Clip : Organ
 
 			transform.DOMove(targetPos, 0.5f);
 		}
-
-
-		//计时相关
-		timeVal -= Time.deltaTime;
-		if(timeVal < 0)
+		else
 		{
-			timeVal = 0;
-			Destroy(gameObject);
+			//计时相关
+			timeVal -= Time.deltaTime;
+			if (timeVal < 0)
+			{
+				timeVal = 0;
+				Destroy(gameObject);
+			}
 		}
-
 
 	}
 

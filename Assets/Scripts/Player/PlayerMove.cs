@@ -317,6 +317,11 @@ public class PlayerMove : MonoBehaviour
     bool isClip = false;
     public void addClip(GameObject clip)
     {
+		if(this.clip != null)
+		{
+			Destroy(this.clip);
+			this.clip = null;
+		}
 		this.clip = clip;
         if (isClip == false)
         {

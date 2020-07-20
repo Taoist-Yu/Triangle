@@ -28,6 +28,7 @@ public class Lamp : Organ
 		if (this.CheckClip(player))
 		{
 			player.GetComponent<PlayerAudio>().PlayLightup();
+			player.GetComponent<PlayerMove>().useClip();
 			EnableLight();
 		}
 	}
@@ -66,9 +67,8 @@ public class Lamp : Organ
 		{
 			flag = true;
 			player.GetComponent<PlayerMove>().useClip();
+			EnableLight();
 		}
-		EnableLight();
-
 		return flag;
 	}
 

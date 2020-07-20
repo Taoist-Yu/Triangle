@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class Escape : Organ
 {
@@ -46,11 +47,6 @@ public class Escape : Organ
 		if(status == Status.wait)
 		{
 			timeVal -= Time.deltaTime;
-			if(timeVal < 0)
-			{
-				timeVal = 0;
-				this.Open();
-			}
 
 			int floor = (int)((timeVal / timeAll) * 20.0f);
 			if(floor >= 10)
@@ -60,6 +56,12 @@ public class Escape : Organ
 			else
 			{
 				text.text = "0" + floor.ToString();
+			}
+
+			if (floor == 0)
+			{
+				timeVal = 0;
+				this.Open();
 			}
 		}
 
@@ -88,7 +90,7 @@ public class Escape : Organ
 
 	void PlayerEscape(GameObject player)
 	{
-
+		SceneManager.LoadScene("EscapeScene");
 	}
 
 

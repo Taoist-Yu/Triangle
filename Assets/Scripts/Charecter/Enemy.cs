@@ -435,8 +435,8 @@ public class Enemy : MonoBehaviour
 
 		yield return new WaitForSeconds(1);
 
-		//加载新场景
-
+		StartCoroutine(player.GetComponent<PlayerEnergy>().PlayerDied());
+		
 	}
 
 	#endregion

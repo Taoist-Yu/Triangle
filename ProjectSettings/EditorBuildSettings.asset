@@ -6,18 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/PlayerTest.unity
-    guid: 2cda990e2423bbf4892e6590ba056729
+    path: Assets/Scenes/GameScene/GameScene.unity
+    guid: a5a63ea94da787749997693b592fddcf
   - enabled: 1
-    path: Assets/Scenes/GameSceneOfEnd/RoofScene.unity
-    guid: 7e7b94898f11f01459aa7066ea2109b6
+    path: Assets/Scenes/EscapeScene.unity
+    guid: c6a4762ad32323a439f0d8c3d87badd2
   - enabled: 1
-    path: Assets/Scenes/Over3.unity
-    guid: c92a58a59dee00648a4687d1028b789e
-  - enabled: 1
-    path: Assets/Scenes/Over.unity
-    guid: b313773e415e71243955c8af3a71d72f
-  - enabled: 1
-    path: Assets/Scenes/Over2.unity
-    guid: 5d9be2cd32eadcd448d192ec15418b1f
+    path: Assets/Scenes/DiedScene.unity
+    guid: 62baba445e69c8d4fbdc9922437cc73d
   m_configObjects: {}
